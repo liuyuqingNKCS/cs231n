@@ -3,6 +3,7 @@ import numpy as np
 from random import shuffle
 from past.builtins import xrange
 
+
 def svm_loss_naive(W, X, y, reg):
     """
     Structured SVM loss function, naive implementation (with loops).
@@ -21,7 +22,7 @@ def svm_loss_naive(W, X, y, reg):
     - loss as single float
     - gradient with respect to weights W; an array of same shape as W
     """
-    dW = np.zeros(W.shape) # initialize the gradient as zero
+    dW = np.zeros(W.shape)  # initialize the gradient as zero
 
     # compute the loss and the gradient
     num_classes = W.shape[1]
@@ -33,7 +34,7 @@ def svm_loss_naive(W, X, y, reg):
         for j in range(num_classes):
             if j == y[i]:
                 continue
-            margin = scores[j] - correct_class_score + 1 # note delta = 1
+            margin = scores[j] - correct_class_score + 1  # note delta = 1
             if margin > 0:
                 loss += margin
 
@@ -54,22 +55,37 @@ def svm_loss_naive(W, X, y, reg):
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    for l in range(num_classes):
+        disparse_dW = np.zeros(X.shape)
+        for i in range(num_train):
+            if y[i] == l:
+                factor = -sum([
+                    sum([
+                        1 if X[i].dot(W[:, index]) - X[i].dot(W[:, y[i]]) +
+                        1 > 0 else 0
+                    ]) for index in range(num_classes) if index != y[i]
+                ])
+            else:
+                factor = sum([
+                    1
+                    if X[i].dot(W[:, l]) - X[i].dot(W[:, y[i]]) + 1 > 0 else 0
+                ])
+            disparse_dW[i] = factor * X[i]
+        dW[:, l] = (disparse_dW).sum(axis=0) / num_train
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-    
-    return loss, dW
 
+    return loss, dW
 
 
 def svm_loss_vectorized(W, X, y, reg):
     """
     Structured SVM loss function, vectorized implementation.
 
-    Inputs and outputs are the same as svm_loss_naive.
+    Incoefficientputs and outputs are the same as svm_loss_naive.
     """
     loss = 0.0
-    dW = np.zeros(W.shape) # initialize the gradient as zero
+    dW = np.zeros(W.shape)  # initialize the gradient as zero
 
     #############################################################################
     # TODO:                                                                     #
@@ -77,11 +93,14 @@ def svm_loss_vectorized(W, X, y, reg):
     # result in loss.                                                           #
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-    pass
-
+    num_classes = W.shape[1]
+    num_train = X.shape[0]
+    scores = X.dot(W)
+    S = np.maximum(
+        0, scores - scores[np.arange(num_train), y].reshape(
+            (num_train, 1)) + 1)
+    loss = (S.sum(axis=1) - 1).sum() / num_train + reg * (W**2).sum()
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
     #############################################################################
     # TODO:                                                                     #
     # Implement a vectorized version of the gradient for the structured SVM     #
@@ -92,9 +111,13 @@ def svm_loss_vectorized(W, X, y, reg):
     # loss.                                                                     #
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-    pass
-
+    S = (S != 0).astype(int)
+    intermediate = S.dot(np.eye(num_classes))
+    intermediate[np.arange(num_train), y] -= S.sum(axis=1)
+    dW = np.sum(intermediate.reshape(
+        (num_train, 1, num_classes)) * X.reshape(X.shape + (1, )),
+                axis=0) / num_train
+    # print(dW[:, 0])
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     return loss, dW

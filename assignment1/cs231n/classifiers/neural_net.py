@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from past.builtins import xrange
 
+
 class TwoLayerNet(object):
     """
     A two-layer fully-connected neural network. The net has an input dimension of
@@ -79,9 +80,13 @@ class TwoLayerNet(object):
         # shape (N, C).                                                             #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-        pass
-
+        # scores = np.maximum(X.dot(W1) + b1, 0).dot(W2) + b2
+        h1 = X.dot(W1) + b1
+        X2 = np.maximum(h1, 0)
+        print(X2.shape)
+        print(W2.shape)
+        print(b2.shape)
+        scores = X2.dot(W2) + b2
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # If the targets are not given then jump out, we're done
@@ -97,9 +102,9 @@ class TwoLayerNet(object):
         # classifier loss.                                                          #
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-        pass
-
+        scores = np.exp(scores)
+        loss = -np.log(scores[np.arange(N), y] / scores.sum(axis=1)).sum() / N
+        loss += reg * ((W1**2).sum() + (W2**2).sum())
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         # Backward pass: compute gradients
@@ -111,8 +116,30 @@ class TwoLayerNet(object):
         #############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        dscores = 1
+        softmax_matrix = (scores / scores.sum(axis=1, keepdims=True))
+        softmax_matrix[np.arange(N), y] -= 1
+        softmax_matrix /= N
 
+        # W2 gradient
+        dW2 = X2.T.dot(softmax_matrix)  # [HxN] * [NxC] = [HxC]
+
+        # b2 gradient
+        db2 = softmax_matrix.sum(axis=0)
+
+        # W1 gradient
+        dW1 = softmax_matrix.dot(W2.T)  # [NxC] * [CxH] = [NxH]
+        dfc1 = dW1 * (h1 > 0)  # [NxH] . [NxH] = [NxH]
+        dW1 = X.T.dot(dfc1)  # [DxN] * [NxH] = [DxH]
+
+        # b1 gradient
+        db1 = dfc1.sum(axis=0)
+
+        # regularization gradient
+        dW1 += reg * 2 * W1
+        dW2 += reg * 2 * W2
+
+        grads = {'W1': dW1, 'b1': db1, 'W2': dW2, 'b2': db2}
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return loss, grads
@@ -155,9 +182,8 @@ class TwoLayerNet(object):
             # them in X_batch and y_batch respectively.                             #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-            pass
-
+            mask = np.random.choice(num_train, batch_size, replace=True)
+            X_batch, y_batch = X[mask], y[mask]
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
             # Compute loss and gradients using the current minibatch
@@ -172,7 +198,10 @@ class TwoLayerNet(object):
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            self.params["W1"] -= learning_rate*grads["W1"]
+            self.params["b1"] -= learning_rate*grads["b1"]
+            self.params["W2"] -= learning_rate*grads["W2"]
+            self.params["b2"] -= learning_rate*grads["b2"]
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -191,9 +220,9 @@ class TwoLayerNet(object):
                 learning_rate *= learning_rate_decay
 
         return {
-          'loss_history': loss_history,
-          'train_acc_history': train_acc_history,
-          'val_acc_history': val_acc_history,
+            'loss_history': loss_history,
+            'train_acc_history': train_acc_history,
+            'val_acc_history': val_acc_history,
         }
 
     def predict(self, X):
@@ -218,7 +247,8 @@ class TwoLayerNet(object):
         ###########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        y_pred = np.argmax(np.maximum(X.dot(
+            self.params["W1"]) + self.params["b1"], 0).dot(self.params["W2"]) + self.params["b2"], axis=1)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 

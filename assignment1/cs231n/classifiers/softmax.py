@@ -3,6 +3,7 @@ import numpy as np
 from random import shuffle
 from past.builtins import xrange
 
+
 def softmax_loss_naive(W, X, y, reg):
     """
     Softmax loss function, naive implementation (with loops)
@@ -32,8 +33,30 @@ def softmax_loss_naive(W, X, y, reg):
     # regularization!                                                           #
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+    N = X.shape[0]
+    for i in range(N):
 
-    pass
+        cur_exp = np.exp(X[i].dot(W))
+        loss += -np.log(cur_exp[y[i]]/np.sum(cur_exp))
+
+        # score = X[i].dot(W)
+        # loss +=  - score[y[i]] + np.log(np.sum(np.exp(score)))
+
+    loss /= N
+    loss += reg*(W**2).sum()
+
+
+    C = W.shape[1]
+    D = W.shape[0]
+    for c in range(C):
+        for i in range(N):
+            score = X[i].dot(W)
+            cur_exp = np.exp(score)
+            dW[:, c] += X[i]*(cur_exp[c]/cur_exp.sum())  # 1,D
+            if y[i] == c:
+                dW[:, c] -= X[i]
+
+    dW /= N
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
@@ -58,7 +81,23 @@ def softmax_loss_vectorized(W, X, y, reg):
     #############################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-    pass
+    N = X.shape[0]
+    scores = np.exp(X.dot(W)) # N*C
+    loss = (-np.log(scores[np.arange(N), y]/scores.sum(axis=1))).sum() / N + reg*(W**2).sum()
+    
+
+    C = W.shape[1]
+    D = W.shape[0]
+    
+    weights = (scores/(scores.sum(axis=1).reshape((N,1)))).reshape((N,C))
+    y = y.reshape((N, 1))
+    classes = np.array(range(C)).reshape((1,C))
+    labels = (y == classes) 
+    weights = (weights - labels).reshape((N,C)) 
+   
+    dW = (X.reshape((N,D,1))*weights.reshape((N,1,C))).sum(axis=0) / N 
+
+
 
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 

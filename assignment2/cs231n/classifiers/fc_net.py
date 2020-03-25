@@ -130,7 +130,18 @@ class TwoLayerNet(object):
 
         return loss, grads
 
+def affine_batch_relu_forward(x, w, b, gamma, beta, bn_param):
+    out, fc_cache = affine_forward(x, w, b)
+    out, batch_cache = batchnorm_forward(out, gamma, beta, bn_param)
+    out, relu_cache = relu_forward(out)
+    cache = (fc_cache, batch_cache, relu_cache)
+    return out, cache
 
+def affine_batch_relu_backward(dout, cache):
+    dout = relu_backward(dout, cache[2])
+    dout, dgamma, dbeta = batchnorm_backward_alt(dout, cache[1])
+    dx, dw, db = affine_backward(dout, cache[0])
+    return dx, dw, db, dgamma, dbeta
 class FullyConnectedNet(object):
     """
     A fully-connected neural network with an arbitrary number of hidden layers,
@@ -202,10 +213,15 @@ class FullyConnectedNet(object):
         dims = [input_dim] + hidden_dims + [num_classes]
         for index, value in enumerate(dims):
             if index != 0:
-                keys = ("W{}".format(index), "b{}".format(index))
+                keys = ["W{}".format(index), "b{}".format(index)]
                 self.params[keys[0]] = weight_scale * \
                     np.random.randn(dims[index-1], value)
                 self.params[keys[1]] = np.zeros((dims[index]))
+                if self.normalization == "batchnorm":
+                    if index != len(dims) -1 :
+                        keys.extend(["gamma{}".format(index), "beta{}".format(index)])
+                        self.params[keys[2]] = np.ones((dims[index]))
+                        self.params[keys[3]] = np.zeros((dims[index]))
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         ############################################################################
@@ -268,30 +284,46 @@ class FullyConnectedNet(object):
         ############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        cur_out = X
-        out = []
-        cache = []
-        for index in range(self.num_layers):
-            cur_out, cur_cache = affine_forward(
-                cur_out, self.params["W{}".format(index+1)], self.params["b{}".format(index+1)])
-            out.append(cur_out)
-            cache.append(cur_cache)
-            if index != self.num_layers - 1:
-                batchnorm_forward(out, )
-                cur_out, cur_cache = relu_forward(out[-1])
+        # {affine - [batch/layer norm] - relu - [dropout]} x (L - 1) - affine - softmax
+
+        if self.normalization == "batchnorm":
+            cur_out = X
+            out = []
+            cache = []
+            for index in range(self.num_layers):
+                
+                if index != self.num_layers - 1:
+                    cur_out, cur_cache = affine_batch_relu_forward(cur_out, self.params["W{}".format(index+1)], self.params["b{}".format(index+1)], self.params["gamma{}".format(index+1)], self.params["beta{}".format(index+1)], self.bn_params[index])
+                    out.append(cur_out)
+                    cache.append(cur_cache)
+                    if self.use_dropout:
+                        cur_out, cur_cache = dropout_forward(out[-1], self.dropout_param)
+                        out.append(cur_out)
+                        cache.append(cur_cache)
+                else:
+                    cur_out, cur_cache = affine_forward(cur_out, self.params["W{}".format(index+1)], self.params["b{}".format(index+1)])
+                    out.append(cur_out)
+                    cache.append(cur_cache)
+            scores = out[-1]
+        else:
+            cur_out = X
+            out = []
+            cache = []
+            for index in range(self.num_layers):
+                cur_out, cur_cache = affine_forward(
+                    cur_out, self.params["W{}".format(index+1)], self.params["b{}".format(index+1)])
                 out.append(cur_out)
                 cache.append(cur_cache)
-        scores = out[-1]
+                if index != self.num_layers - 1:
+                    cur_out, cur_cache = relu_forward(out[-1])
+                    out.append(cur_out)
+                    cache.append(cur_cache)
+                    if self.use_dropout:
+                        cur_out, cur_cache = dropout_forward(out[-1], self.dropout_param)
+                        out.append(cur_out)
+                        cache.append(cur_cache)
+            scores = out[-1]
 
-        # 原先实现
-        # media_results = dict()
-        # media_results["X1"] = X
-        # for index in range(self.num_layers):
-        #     scores = scores.dot(self.params["W{}".format(index+1)] + self.params["b{}".format(index+1)])
-        #     media_results["h{}".format(index+1)] = scores
-        #     if index != self.num_layers - 1:
-        #         scores = np.maximum(scores, 0)
-        #         media_results["X{}".format(index+2)] = scores
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         ############################################################################
@@ -327,13 +359,26 @@ class FullyConnectedNet(object):
         grads["W{}".format(self.num_layers)] += self.reg * self.params["W{}".format(self.num_layers)] * 2 / 2
         cache_index -= 1
         dout = dlast
-        for i in reversed(range(self.num_layers)):
-            if i >= 1:
-                dout = relu_backward(dout, cache[cache_index])
-                cache_index -= 1
-                dout, grads["W{}".format(i)], grads["b{}".format(i)] = affine_backward(dout, cache[cache_index])
-                grads["W{}".format(i)] += self.reg * self.params["W{}".format(i)] * 2 / 2
-                cache_index -= 1
+        if self.normalization == "batchnorm":
+            for i in reversed(range(self.num_layers)):
+                if i >= 1:
+                    if self.use_dropout:
+                        dout = dropout_backward(dout, cache[cache_index])
+                        cache_index -= 1
+                    dout, grads["W{}".format(i)], grads["b{}".format(i)], grads["gamma{}".format(i)], grads["beta{}".format(i)]   = affine_batch_relu_backward(dout, cache[cache_index])
+                    grads["W{}".format(i)] += self.reg * self.params["W{}".format(i)] * 2 / 2
+                    cache_index -= 1
+        else:
+            for i in reversed(range(self.num_layers)):
+                if i >= 1:
+                    if self.use_dropout:
+                        dout = dropout_backward(dout, cache[cache_index])
+                        cache_index -= 1
+                    dout = relu_backward(dout, cache[cache_index])
+                    cache_index -= 1
+                    dout, grads["W{}".format(i)], grads["b{}".format(i)] = affine_backward(dout, cache[cache_index])
+                    grads["W{}".format(i)] += self.reg * self.params["W{}".format(i)] * 2 / 2
+                    cache_index -= 1
 
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****

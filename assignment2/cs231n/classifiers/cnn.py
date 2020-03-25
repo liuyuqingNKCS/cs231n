@@ -16,9 +16,14 @@ class ThreeLayerConvNet(object):
     consisting of N images, each with height H and width W and with C input
     channels.
     """
-
-    def __init__(self, input_dim=(3, 32, 32), num_filters=32, filter_size=7,
-                 hidden_dim=100, num_classes=10, weight_scale=1e-3, reg=0.0,
+    def __init__(self,
+                 input_dim=(3, 32, 32),
+                 num_filters=32,
+                 filter_size=7,
+                 hidden_dim=100,
+                 num_classes=10,
+                 weight_scale=1e-3,
+                 reg=0.0,
                  dtype=np.float32):
         """
         Initialize a new network.
@@ -51,11 +56,23 @@ class ThreeLayerConvNet(object):
         # IMPORTANT: For this assignment, you can assume that the padding          #
         # and stride of the first convolutional layer are chosen so that           #
         # **the width and height of the input are preserved**. Take a look at      #
-        # the start of the loss() function to see how that happens.                #                           
+        # the start of the loss() function to see how that happens.                #
         ############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        stride = 1
+        pad = (filter_size - 1) // 2
 
-        pass
+        self.params['W1'] = weight_scale * \
+            np.random.randn(num_filters, input_dim[0], filter_size, filter_size)
+        self.params['b1'] = np.zeros((num_filters, ))
+
+        self.params['W2'] = weight_scale * \
+            np.random.randn(num_filters * int(input_dim[1]/2) * int(input_dim[2]/2), hidden_dim)
+        self.params['b2'] = np.zeros((hidden_dim))
+
+        self.params['W3'] = weight_scale * \
+            np.random.randn(hidden_dim, num_classes)
+        self.params['b3'] = np.zeros((num_classes))
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         ############################################################################
@@ -63,13 +80,15 @@ class ThreeLayerConvNet(object):
         ############################################################################
 
         for k, v in self.params.items():
+            # print(k, v)
+            # print(type(self.params[k]))
+            # print(type(v))
             self.params[k] = v.astype(dtype)
-
 
     def loss(self, X, y=None):
         """
         Evaluate loss and gradient for the three-layer convolutional network.
-
+        
         Input / output: Same API as TwoLayerNet in fc_net.py.
         """
         W1, b1 = self.params['W1'], self.params['b1']
@@ -95,8 +114,17 @@ class ThreeLayerConvNet(object):
         ############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
-
+        # print("~"*20)
+        # print(X.shape)
+        out, cache1 = conv_relu_forward(X, W1, b1, conv_param)
+        # print(out.shape)
+        out, cache2 = max_pool_forward_fast(out, pool_param)
+        # print(out.shape)
+        out, cache3 = affine_relu_forward(out, W2, b2)
+        # print(out.shape)
+        out, cache4 = affine_forward(out, W3, b3)
+        # print(out.shape)
+        scores = out
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         ############################################################################
         #                             END OF YOUR CODE                             #
@@ -118,7 +146,17 @@ class ThreeLayerConvNet(object):
         ############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        loss, dout = softmax_loss(scores, y)
+        loss += self.reg / 2 * ((W1**2).sum() + (W2**2).sum() + (W3**2).sum())
+
+        # conv - relu - 2x2 max pool - affine - relu - affine - softmax
+        dout, grads["W3"], grads["b3"] = affine_backward(dout, cache4)
+        grads["W3"] += self.reg * (W3**2)
+        dout, grads["W2"], grads["b2"] = affine_relu_backward(dout, cache3)
+        grads["W2"] += self.reg * (W2**2)
+        dout = max_pool_backward_fast(dout, cache2)
+        dout, grads["W1"], grads["b1"] = conv_relu_backward(dout, cache1)
+        grads["W1"] += self.reg * (W1**2)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         ############################################################################

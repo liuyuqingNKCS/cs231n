@@ -1,6 +1,6 @@
 # Convolutional Neural Networks for Visual Recognition (Spring 2019)
 
-<!-- scp /home/chenxu.cnarutox/cs231n/index.html root@66.42.107.116:/root/chenwx.com/other/cs231n -->
+[Formula lossless full version](https://htmlpreview.github.io/?https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/README.html)
 
 ### Lecture 1 | Introduction to CNN for Visual Recognition
 
@@ -53,7 +53,7 @@
   - Analytic gradient: fast :), exact :), error-prone :(
 - Computational graphs
   - Patterns in Gradient Flow
-    ![assets/Snipaste_2020-03-03_13-10-33.png](assets/Snipaste_2020-03-03_13-10-33.png)
+    ![https://github.com/liuyuqingNKCS/cs231n/assets/Snipaste_2020-03-03_13-10-33.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-03_13-10-33.png)
 - How to compute gradients?
   - Computational graphs + Backpropagation
     - backprop with scalars
@@ -92,7 +92,7 @@
 
 #### Activation Functions (<font color=red>Use ReLU</font>)
 
-<img src='assets/Snipaste_2020-02-23_16-20-44_p5tnag4t1.png' width=500>
+<img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-02-23_16-20-44_p5tnag4t1.png' width=500>
 
 - Sigmoid problems
   1. Saturated neurons “kill” the gradients
@@ -133,7 +133,7 @@
 
 #### Batch Normalization (<font color=red>Use</font>)
 
-![Snipaste_2020-03-05_21-34-47](assets/Snipaste_2020-03-05_21-34-47.png)
+![Snipaste_2020-03-05_21-34-47](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-05_21-34-47.png)
 
 #### Babysitting the Learning Process
 
@@ -169,18 +169,18 @@
   > SGD + Nesterov Momentum: $x_{t+1}=x_t+\rho{v_t}-\alpha{\triangledown f(x_t+\rho{v_t})}$
 
 - AdaGrad => RMSProp (Leaky AdaGrad) (梯度大小)
-  ![Snipaste_2020-03-06_15-16-46.png](assets/Snipaste_2020-03-06_15-16-46.png)
+  ![Snipaste_2020-03-06_15-16-46.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-16-46.png)
 - <font color=red>Adam (almost)</font>
-  ![Snipaste_2020-03-06_15-11-07.png](assets/Snipaste_2020-03-06_15-11-07.png)
+  ![Snipaste_2020-03-06_15-11-07.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-11-07.png)
 - Learning Rate Decay (common with momentum & less common with Adam)
-  <img src='assets/Snipaste_2020-03-06_15-32-12.png' width=300></img>
+  <img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-32-12.png' width=300></img>
 - Second-Order Optimization (without learning rate)
   - First-Order Optimization
     1. Use gradient form linear approximation
     2. Step to minimize the approximation
   1. Use gradient and Hessian to form quadratic approximation
   2. Step to the minima of the approximation
-     <img src='assets/Snipaste_2020-03-06_15-38-50.png' width=500></img>
+     <img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-38-50.png' width=500></img>
 - Model Ensembles: Tips and Tricks
 
 #### Regularization

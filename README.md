@@ -1,7 +1,7 @@
 # Convolutional Neural Networks for Visual Recognition (Spring 2019)
 
-<!-- scp /home/chenxu.cnarutox/cs231n/index.html root@66.42.107.116:/root/chenwx.com/other/cs231n -->
-
+[12](https://htmlpreview.github.io/?https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/README.html)
+<a target="_blank" rel="noopener noreferrer" href="https://htmlpreview.github.io/?https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/README.html">12</a>
 ### Lecture 1 | Introduction to CNN for Visual Recognition
 
 ---

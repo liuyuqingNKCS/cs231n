@@ -1,10 +1,8 @@
 # Convolutional Neural Networks for Visual Recognition (Spring 2019)
 
-[Formula lossless full version](https://htmlpreview.github.io/?https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/README.html)
+[Formula Lossless Version](https://htmlpreview.github.io/?https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/README.html)
 
 ### Lecture 1 | Introduction to CNN for Visual Recognition
-
----
 
 ### Lecture 2 | Image Classification
 
@@ -20,8 +18,6 @@
   2. Cross-Validation: Split data into folds
 - Linear Classification
   - $s=f(x,W) = Wx + b$
-
----
 
 ### Lecture 3 | Loss Functions and Optimization
 

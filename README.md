@@ -92,7 +92,7 @@
 
 #### Activation Functions (<font color=red>Use ReLU</font>)
 
-<img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-02-23_16-20-44_p5tnag4t1.png' width=500>
+<img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-02-23_16-20-44_p5tnag4t1.png?raw=true' width=500>
 
 - Sigmoid problems
   1. Saturated neurons “kill” the gradients
@@ -173,7 +173,7 @@
 - <font color=red>Adam (almost)</font>
   ![Snipaste_2020-03-06_15-11-07.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-11-07.png?raw=true)
 - Learning Rate Decay (common with momentum & less common with Adam)
-  <img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-32-12.png' width=300></img>
+  <img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-32-12.png?raw=true' width=300></img>
 - Second-Order Optimization (without learning rate)
   - First-Order Optimization
     1. Use gradient form linear approximation
@@ -216,9 +216,9 @@ Have some dataset of interest but it has < ~1M images?
 2. Transfer learn to your dataset
 
 Deep learning frameworks provide a “Model Zoo” of pretrained models so you don’t need to train your own
-Caffe: https://github.com/BVLC/caffe/wiki/Model-Zoo
-TensorFlow: https://github.com/tensorflow/models
-PyTorch: https://github.com/pytorch/vision
+- Caffe: https://github.com/BVLC/caffe/wiki/Model-Zoo
+- TensorFlow: https://github.com/tensorflow/models
+- PyTorch: https://github.com/pytorch/vision
 
 #### Choosing Hyperparameters
 

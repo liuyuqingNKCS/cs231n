@@ -53,7 +53,7 @@
   - Analytic gradient: fast :), exact :), error-prone :(
 - Computational graphs
   - Patterns in Gradient Flow
-    ![https://github.com/liuyuqingNKCS/cs231n/assets/Snipaste_2020-03-03_13-10-33.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-03_13-10-33.png)
+    ![https://github.com/liuyuqingNKCS/cs231n/assets/Snipaste_2020-03-03_13-10-33.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-03_13-10-33.png?raw=true)
 - How to compute gradients?
   - Computational graphs + Backpropagation
     - backprop with scalars
@@ -133,7 +133,7 @@
 
 #### Batch Normalization (<font color=red>Use</font>)
 
-![Snipaste_2020-03-05_21-34-47](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-05_21-34-47.png)
+![Snipaste_2020-03-05_21-34-47](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-05_21-34-47.png?raw=true)
 
 #### Babysitting the Learning Process
 
@@ -169,9 +169,9 @@
   > SGD + Nesterov Momentum: $x_{t+1}=x_t+\rho{v_t}-\alpha{\triangledown f(x_t+\rho{v_t})}$
 
 - AdaGrad => RMSProp (Leaky AdaGrad) (梯度大小)
-  ![Snipaste_2020-03-06_15-16-46.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-16-46.png)
+  ![Snipaste_2020-03-06_15-16-46.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-16-46.png?raw=true)
 - <font color=red>Adam (almost)</font>
-  ![Snipaste_2020-03-06_15-11-07.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-11-07.png)
+  ![Snipaste_2020-03-06_15-11-07.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-11-07.png?raw=true)
 - Learning Rate Decay (common with momentum & less common with Adam)
   <img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-32-12.png' width=300></img>
 - Second-Order Optimization (without learning rate)
@@ -180,7 +180,7 @@
     2. Step to minimize the approximation
   1. Use gradient and Hessian to form quadratic approximation
   2. Step to the minima of the approximation
-     <img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-38-50.png' width=500></img>
+     <img src='https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-06_15-38-50.png?raw=true' width=500></img>
 - Model Ensembles: Tips and Tricks
 
 #### Regularization

@@ -53,7 +53,7 @@
   - Analytic gradient: fast :), exact :), error-prone :(
 - Computational graphs
   - Patterns in Gradient Flow
-    ![https://github.com/liuyuqingNKCS/cs231n/assets/Snipaste_2020-03-03_13-10-33.png](assets/Snipaste_2020-03-03_13-10-33.png)
+    ![https://github.com/liuyuqingNKCS/cs231n/assets/Snipaste_2020-03-03_13-10-33.png](https://github.com/liuyuqingNKCS/cs231n/blob/master/assets/Snipaste_2020-03-03_13-10-33.png)
 - How to compute gradients?
   - Computational graphs + Backpropagation
     - backprop with scalars

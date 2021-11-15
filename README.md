@@ -206,7 +206,7 @@
 #### Tansfer learning
 
 |                         | very similar dataset               | very different dataset                                         |
-| ----------------------- | ---------------------------------- | -------------------------------------------------------------- |
+|-------------------------|------------------------------------|----------------------------------------------------------------|
 | **very little data**    | Use Linear Classifier on top layer | You’re in trouble… Try linear classifier from different stages |
 | **quite a lot of data** | Finetune a few layers              | Finetune a larger number of layers                             |
 
